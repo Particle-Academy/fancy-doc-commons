@@ -26,8 +26,15 @@ jobs:
       - name: Build
         run: npm run build
 
-      # Trusted Publishing (OIDC) — no token; configure a Trusted Publisher for
-      # this package + workflow on npmjs.com. Pin npm 11.18.0: npm@latest (12.0.0)
-      # ships a broken --provenance path that fails with "Cannot find module 'sigstore'".
+      # FIRST-PUBLISH BOOTSTRAP (per .ai/knowledge/publishing.md §"Bootstrapping a
+      # brand-new package"): npm won't let you configure a Trusted Publisher for a
+      # package that doesn't exist yet, so the very first publish authenticates with
+      # a short-lived NPM_TOKEN repo secret. Provenance is still signed via OIDC
+      # (id-token: write). AFTER 0.1.0 lands + a Trusted Publisher is added on
+      # npmjs.com, delete the `env:` block below + revoke the token → pure OIDC.
+      # npm pinned to 11.18.0: npm@latest (12.0.0) breaks --provenance ("Cannot
+      # find module 'sigstore'").
       - name: Publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx -y npm@11.18.0 publish --provenance --access public
