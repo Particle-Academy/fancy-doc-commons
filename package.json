@@ -1,0 +1,65 @@
+{
+  "name": "@particle-academy/fancy-doc-commons",
+  "version": "0.1.0",
+  "description": "Shared pure core for the Fancy document/surface packages — the model an agent or human emits and edits. Flat node-tree + collab-safe fractional ordering, a typed op-spine contract (reduce + invert) with a reference tree reducer, an infinite-canvas primitive (viewport / positioned item / connector), and a surface-agnostic staged-write (accept/reject) model. Zero dependencies, no React.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Particle-Academy/fancy-doc-commons.git"
+  },
+  "homepage": "https://github.com/Particle-Academy/fancy-doc-commons#readme",
+  "bugs": "https://github.com/Particle-Academy/fancy-doc-commons/issues",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "tsc --noEmit",
+    "test": "node --import tsx --test test/*.test.ts",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "tsup"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "document-model",
+    "node-tree",
+    "fractional-index",
+    "op-spine",
+    "reduce",
+    "invert",
+    "canvas",
+    "viewport",
+    "staged-write",
+    "fancy-ui",
+    "particle-academy"
+  ],
+  "license": "MIT",
+  "sideEffects": false,
+  "overrides": {
+    "esbuild": "^0.28.1"
+  }
+}

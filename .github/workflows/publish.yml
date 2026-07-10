@@ -1,0 +1,33 @@
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      # Trusted Publishing (OIDC) — no token; configure a Trusted Publisher for
+      # this package + workflow on npmjs.com. Pin npm 11.18.0: npm@latest (12.0.0)
+      # ships a broken --provenance path that fails with "Cannot find module 'sigstore'".
+      - name: Publish
+        run: npx -y npm@11.18.0 publish --provenance --access public
