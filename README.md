@@ -19,6 +19,7 @@ bridge.
 | **Op-spine** | `DocReducer<Doc, Op>` (the `reduce` + `invert` contract every surface implements), `reduceAll`, and a reference `treeReducer()` / `TreeOp` over `DocTree` with exact inverses. |
 | **Canvas** | `Viewport` / `PositionedItem` / `Connector` (the shape triplicated in whiteboard / artboard / flow), `byZ`, `topZ`, `screenToWorld`, `worldToScreen`. |
 | **Staged writes** | `AcceptanceState` / `AcceptanceStatus` / `Proposal` / `StagePolicy` — one trust-but-verify (accept / reject) model for every surface. |
+| **Style + CSS** | `StyleProps` / `Constraints` / `PerBreakpoint` / `StyledNode` + `emitTreeCss` — the per-breakpoint style model and its **deterministic** CSS emitter (sorted decls/ids, fixed media format), so a doc gets responsive styling + an SSR first byte. Pass your own `selectorFor` to match an existing convention byte-for-byte (cms uses `[data-cms]`). |
 
 ## The idea
 
@@ -41,6 +42,8 @@ const back = reduceAll(r, next, undo); // deep-equals doc
 
 ## Status
 
-Phase 1, v0.1: ordering · tree · op-spine · canvas · staged writes. **Next slice:
-the per-breakpoint `StyleProps` + deterministic CSS emitter** (extracted from cms),
-then `registerDocBridge` (in `agent-integrations`) generated from a `DocReducer`.
+Phase 1, v0.1: ordering · tree · op-spine · canvas · staged writes · style + CSS
+emitter. **Next (Phase 2):** `registerDocBridge` in `agent-integrations` — generate
+a surface's MCP tools (read + typed op tools + uniform undo/pending/activity) from a
+`DocReducer`, and build the greenfield `registerCmsBridge` on it. Later slices:
+data-binding (`{$bind}`) + actions + motion.
