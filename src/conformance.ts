@@ -101,7 +101,7 @@ export const CANONICAL_WALKS = {
   ancestorsOfGrandchild: [CANONICAL_IDS.childB1, CANONICAL_IDS.rootB],
   /**
    * An orphan has NO ancestors. Its `parent` points at an id not in the tree,
-   * and reporting that dangling id — which this did until 0.2.1 — hands the
+   * and reporting that dangling id — which this did until 0.4.0 — hands the
    * caller something `tree.nodes[…]` cannot resolve.
    */
   ancestorsOfOrphan: [] as string[],
