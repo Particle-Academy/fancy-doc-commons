@@ -15,6 +15,40 @@ upgrading.
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-08-09
+
+### Fixed
+
+- **`move` refuses to parent a node under itself or its own descendant.** The
+  reducer previously reparented unconditionally, so it could CREATE a cycle —
+  the same cycle every walk had to survive after 0.2.1. Guarding here is the
+  root cause; guarding the walks was damage control.
+
+  Consistent with every other invalid op, an invalid move is a **no-op**: the
+  document is returned unchanged rather than throwing, because this reducer is
+  documented pure and total.
+
+  **What you must do:** almost certainly nothing — the moves this rejects were
+  already producing a broken document. If you relied on the old behaviour to
+  detect the failure downstream, note that it now fails at the reducer instead,
+  by returning the same document you passed in.
+
+- **`byOrder` breaks ties on `id`.** Two siblings sharing an order key compared
+  equal, so their relative order came from `for...in` over the nodes object —
+  from insertion order. Two documents with identical CONTENT could render in
+  different orders, and one document could reorder itself after a JSON
+  round-trip. Duplicate keys are not supposed to happen, but "not supposed to"
+  is how they arrive: a bad merge, a hand-edit, a port that mints keys
+  differently.
+
+  `id` is the tie-break because it is the only other field guaranteed present
+  and unique, which makes the ordering total and therefore reproducible.
+
+  **What you must do:** nothing, unless you have duplicate order keys today — in
+  which case those siblings had an arbitrary order before and now have a stable
+  one, which may differ from what you were seeing.
+
+
 ## [0.2.1] — 2026-08-09
 
 ### Fixed

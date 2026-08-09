@@ -6,7 +6,7 @@
  * computable `invert` is what lets undo, redo, staged writes, presence, and collab
  * all derive from ONE code path instead of five bespoke ones.
  */
-import { descendantsOf, type DocId, type DocNode, type DocTree } from "./tree";
+import { descendantsOf, isAncestorOrSelf, type DocId, type DocNode, type DocTree } from "./tree";
 
 /**
  * A pure reducer contract for a document `TDoc` and its op union `TOp`.
@@ -63,6 +63,15 @@ export function treeReducer<N extends DocNode>(): DocReducer<DocTree<N>, TreeOp<
       case "move": {
         const node = doc.nodes[op.id];
         if (!node) return doc;
+        // Refuse to parent a node under itself or one of its own descendants.
+        // Without this the reducer CREATES the cycle that every walk then has
+        // to survive — and the walks only stopped hanging on one in 0.2.1.
+        // Guarding here is the root cause; guarding there was damage control.
+        //
+        // A no-op (returning `doc` unchanged) rather than a throw, because this
+        // reducer is documented pure + total and every other invalid op already
+        // returns the document untouched.
+        if (op.parent !== null && isAncestorOrSelf(doc, op.parent, op.id)) return doc;
         return { nodes: { ...doc.nodes, [op.id]: { ...node, parent: op.parent, order: op.order } } };
       }
       case "set_props": {

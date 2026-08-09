@@ -35,9 +35,23 @@ export interface DocTree<N extends DocNode = DocNode> {
   nodes: Record<DocId, N>;
 }
 
-/** Compare two fractional order keys (lexicographic). */
+/**
+ * Compare two fractional order keys, falling back to `id` on a tie.
+ *
+ * Without the tie-break, two siblings sharing an order key compare equal and
+ * their relative order comes from `for...in` over the nodes object — i.e. from
+ * insertion order. Two documents with identical CONTENT could then render in
+ * different orders, and the same document could reorder itself after a
+ * round-trip through JSON. Duplicate keys are not supposed to happen, but
+ * "not supposed to" is how they arrive: a bad merge, a hand-edit, a port that
+ * mints keys differently.
+ *
+ * `id` is the tie-break because it is the only other field guaranteed present
+ * and unique, which makes the order TOTAL and therefore reproducible.
+ */
 function byOrder<N extends DocNode>(a: N, b: N): number {
-  return a.order < b.order ? -1 : a.order > b.order ? 1 : 0;
+  if (a.order !== b.order) return a.order < b.order ? -1 : 1;
+  return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
 }
 
 /** Direct children of `parent` (pass `null` for the roots), sorted by fractional order. */

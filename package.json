@@ -1,6 +1,6 @@
 {
   "name": "@particle-academy/fancy-doc-commons",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Shared pure core for the Fancy document/surface packages \u2014 the model an agent or human emits and edits. Flat node-tree + collab-safe fractional ordering, a typed op-spine contract (reduce + invert) with a reference tree reducer, an infinite-canvas primitive (viewport / positioned item / connector), and a surface-agnostic staged-write (accept/reject) model. Zero dependencies, no React.",
   "repository": {
     "type": "git",
