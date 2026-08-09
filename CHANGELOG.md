@@ -15,6 +15,44 @@ upgrading.
 
 ## [Unreleased]
 
+## [0.2.1] — 2026-08-09
+
+### Fixed
+
+- **A cyclic tree no longer hangs the process.** `ancestorsOf` walked the parent
+  chain with no guard, so a document where `a` is parented under `b` and `b`
+  under `a` spun forever. A `DocTree` arrives as JSON — from a file, a network
+  payload, or a reducer bug — so it is not guaranteed acyclic, and every walk
+  has to terminate on one anyway.
+
+  The sharpest version: `isAncestorOrSelf` is the guard that PREVENTS a node
+  being reparented into its own subtree, and on a document that already had a
+  cycle, the guard itself was what hung. This is a hang rather than a crash,
+  which is strictly worse to diagnose — the process sits at 100% and never
+  returns.
+
+- **`descendantsOf` is iterative.** It recursed once per level, so a cyclic
+  document overflowed the stack and an acyclic-but-deep one was bounded by the
+  JS stack (~11k frames) rather than by anything the document model says.
+  Verified: the previous implementation throws `RangeError` at 12,000 levels;
+  this one does not.
+
+  **What you must do:** nothing. Acyclic results are unchanged, pinned by a test.
+
+### Added
+
+- **`LICENSE`.** The package has declared MIT since it shipped, with no file to
+  back it — and `files` did not include one, so no published tarball ever
+  carried the licence text either. Both fixed.
+
+### Known, and deliberately not changed here
+
+- `childrenOf` scans every node to find one parent's children, so walking a
+  chain is O(n²). Worth an index, and worth measuring before adding one — but a
+  separate change from removing the recursion, and bundling them would have hidden
+  it.
+
+
 ## 0.2.0 — 2026-08-07
 
 ### Changed

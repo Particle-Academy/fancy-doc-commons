@@ -58,21 +58,44 @@ export function roots<N extends DocNode>(tree: DocTree<N>): N[] {
 /** All descendant ids of `id`, depth-first, excluding `id` itself. */
 export function descendantsOf<N extends DocNode>(tree: DocTree<N>, id: DocId): DocId[] {
   const out: DocId[] = [];
-  const walk = (pid: DocId): void => {
-    for (const child of childrenOf(tree, pid)) {
+  // Iterative, and guarded by `seen`, for two separate reasons:
+  //
+  //   1. A CYCLE (a parented under b, b parented under a) made the recursive
+  //      version recurse forever — a stack overflow that takes the process with
+  //      it. A tree is not guaranteed acyclic: it arrives as JSON, from a file,
+  //      a network payload, or a reducer bug.
+  //   2. Even acyclic, a deep document recursed once per level, so depth was
+  //      bounded by the JS stack rather than by anything the document model
+  //      says.
+  const stack: DocId[] = [id];
+  const seen = new Set<DocId>([id]);
+
+  while (stack.length) {
+    for (const child of childrenOf(tree, stack.pop()!)) {
+      if (seen.has(child.id)) continue;
+      seen.add(child.id);
       out.push(child.id);
-      walk(child.id);
+      stack.push(child.id);
     }
-  };
-  walk(id);
+  }
   return out;
 }
 
 /** Ancestor ids of `id`, nearest first (excludes `id`). */
 export function ancestorsOf<N extends DocNode>(tree: DocTree<N>, id: DocId): DocId[] {
   const out: DocId[] = [];
+  // `seen` stops a cyclic parent chain looping forever. Without it this is a
+  // hang, not a crash — the process spins at 100% and never returns, which is
+  // strictly worse to diagnose than a stack overflow.
+  //
+  // It matters most because `isAncestorOrSelf` is the guard that PREVENTS
+  // cycles: on a document that already has one, the guard itself was the thing
+  // that hung.
+  const seen = new Set<DocId>([id]);
   let cur = tree.nodes[id]?.parent ?? null;
-  while (cur !== null) {
+
+  while (cur !== null && !seen.has(cur)) {
+    seen.add(cur);
     out.push(cur);
     cur = tree.nodes[cur]?.parent ?? null;
   }
