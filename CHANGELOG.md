@@ -15,6 +15,42 @@ upgrading.
 
 ## [Unreleased]
 
+## [0.2.1] — 2026-08-09
+
+### Added
+
+- **`CANONICAL_TREE` / `CANONICAL_WALKS` / `CANONICAL_IDS`** — the shared fixture
+  every document surface asserts against. Story #171, AC1.
+
+  `fancy-cms-ui` and `fancy-screens` both declare their node as
+  `extends DocNode`, which the type system checks *inside each package*. It
+  cannot check that the two agree at runtime on the thing that matters: that the
+  same tree, walked by the same functions, gives the same answer whichever
+  surface owns it. That is what this fixture pins, and each consumer asserts it
+  in its own CI.
+
+  It ships **in the package**, not in `test/` — a consumer cannot assert against
+  a file it cannot install.
+
+  The tree is deliberately awkward, because easy cases never drift: two roots, a
+  sibling group whose `order` keys disagree with insertion order, a three-level
+  chain, and an orphan whose parent is absent.
+
+### Fixed
+
+- **`ancestorsOf` no longer reports an ancestor that does not exist.** For an
+  orphan — a node whose `parent` points at an id no longer in the tree, which a
+  document loaded from a database really can contain — it returned that dangling
+  id, so `ancestorsOf(id).map((a) => tree.nodes[a])` handed the caller
+  `undefined`.
+
+  The walk still follows the chain in case the gap is intermediate; it just no
+  longer claims a node it cannot produce.
+
+  **What you must do:** nothing, unless you relied on receiving ids for missing
+  nodes — which could only have been to skip them.
+
+
 ## [0.3.0] — 2026-08-09
 
 ### Fixed

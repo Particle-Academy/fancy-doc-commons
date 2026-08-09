@@ -76,3 +76,8 @@ export {
 } from "./style";
 
 export { type EmitCssOptions, emitTreeCss } from "./css";
+
+// The shared fixture both document surfaces assert against. Shipped in the
+// package, not the test folder: a consumer cannot assert against a file it
+// cannot install.
+export { CANONICAL_TREE, CANONICAL_WALKS, CANONICAL_IDS } from "./conformance";

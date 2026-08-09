@@ -110,7 +110,13 @@ export function ancestorsOf<N extends DocNode>(tree: DocTree<N>, id: DocId): Doc
 
   while (cur !== null && !seen.has(cur)) {
     seen.add(cur);
-    out.push(cur);
+    // Only report ancestors that EXIST. A node whose `parent` points at an id
+    // no longer in the tree — an orphan, which a document loaded from a
+    // database really can contain — used to yield that dangling id, so
+    // `ancestorsOf(id).map((a) => tree.nodes[a])` handed the caller
+    // `undefined`. The walk still follows the chain in case the gap is
+    // intermediate; it just does not claim a node it cannot produce.
+    if (tree.nodes[cur] !== undefined) out.push(cur);
     cur = tree.nodes[cur]?.parent ?? null;
   }
   return out;
