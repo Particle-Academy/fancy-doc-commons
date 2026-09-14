@@ -1,5 +1,7 @@
 # @particle-academy/fancy-doc-commons
 
+[![Fancified](art/fancified.svg)](https://particle.academy)
+
 The shared, pure, zero-dependency core for the Fancy **document / surface**
 packages — the model an agent or a human emits and edits. Sibling of
 [`fancy-file-commons`](https://github.com/Particle-Academy/fancy-file-commons)
