@@ -15,6 +15,13 @@ upgrading.
 
 ## [Unreleased]
 
+### Changed
+
+- **Releases need a lab-run certificate.** `publish.yml` gains a read-only
+  `lab-certificate` job that every publishing job needs: a tag is published only
+  when the fancy-labs lab has certified that exact version and commit. Consumers
+  do nothing; this changes how releases are cut, not what the package does.
+
 ### Fixed
 
 - **`CHANGELOG.md` is now in the published tarball.** `files` did not whitelist it, so npm never shipped it — and this package puts breaking changes in MINOR releases and tells you in the README to read the entry before taking one. The instruction existed for the author, who has the file, and not for the consumer, who is the only one being instructed. Nothing for you to do; the file simply arrives from this release on.
@@ -54,7 +61,6 @@ upgrading.
   **What you must do:** nothing, unless you relied on receiving ids for missing
   nodes — which could only have been to skip them.
 
-
 ## [0.3.0] — 2026-08-09
 
 ### Fixed
@@ -87,7 +93,6 @@ upgrading.
   **What you must do:** nothing, unless you have duplicate order keys today — in
   which case those siblings had an arbitrary order before and now have a stable
   one, which may differ from what you were seeing.
-
 
 ## [0.2.1] — 2026-08-09
 
@@ -126,7 +131,6 @@ upgrading.
   separate change from removing the recursion, and bundling them would have hidden
   it.
 
-
 ## 0.2.0 — 2026-08-07
 
 ### Changed
@@ -140,7 +144,6 @@ upgrading.
 ### Why
 
 These are the kit 0.5 platform floors, applied across every package at once so a consumer never has to resolve a mix. **No API changed, nothing was removed, nothing was renamed** — only what the package requires.
-
 
 ## 0.1.0 — 2026-07-10
 
