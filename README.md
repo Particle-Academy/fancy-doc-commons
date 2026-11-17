@@ -51,8 +51,9 @@ const back = reduceAll(r, next, undo); // deep-equals doc
 
 ## Status
 
-Phase 1, v0.1: ordering · tree · op-spine · canvas · staged writes · style + CSS
-emitter. **Next (Phase 2):** `registerDocBridge` in `agent-integrations` — generate
-a surface's MCP tools (read + typed op tools + uniform undo/pending/activity) from a
-`DocReducer`, and build the greenfield `registerCmsBridge` on it. Later slices:
-data-binding (`{$bind}`) + actions + motion.
+Shipped here: ordering · tree · op-spine · canvas · staged writes · style + CSS
+emitter · the canonical conformance fixture. **Shipped in
+`@particle-academy/agent-integrations`:** `registerDocBridge`, which generates a
+surface's MCP tools (read + typed op tools + uniform undo/pending/activity) from a
+`DocReducer`, with `registerCmsBridge` and `registerScreenDocBridge` built on it.
+Later slices, not built yet: data-binding (`{$bind}`) + actions + motion.

@@ -26,6 +26,7 @@ upgrading.
 
 ### Fixed
 
+- **Docs:** the README Status called `registerDocBridge` "Next (Phase 2)" and the package "v0.1". The bridge ships in `@particle-academy/agent-integrations` (with `registerCmsBridge` and `registerScreenDocBridge` built on it), and the Status now says so. Docs only; nothing to do.
 - **`CHANGELOG.md` is now in the published tarball.** `files` did not whitelist it, so npm never shipped it — and this package puts breaking changes in MINOR releases and tells you in the README to read the entry before taking one. The instruction existed for the author, who has the file, and not for the consumer, who is the only one being instructed. Nothing for you to do; the file simply arrives from this release on.
 
 ## [0.4.0] — 2026-08-09
